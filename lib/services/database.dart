@@ -13,14 +13,25 @@ class DatabaseService {
     await FirebaseFirestore.instance.collection("data").doc(username).set(data);
   }
 
-  // Future<void> updateDataInDatabase(String username, Map data) async {
-  //   await FirebaseFirestore.instance
-  //       .collection("data")
-  //       .doc(username)
-  //       .update(data);
-  // }
+  Future<void> updateDataInDatabase(String username, Map data) async {
+    await FirebaseFirestore.instance
+        .collection("data")
+        .doc(username)
+        .update(data);
+  }
 
   Future<Stream<QuerySnapshot>> queryDataFromDatabase() async {
-    return FirebaseFirestore.instance.collection("data").snapshots();
+    return FirebaseFirestore.instance
+        .collection("data")
+        .orderBy("skor", descending: true)
+        .snapshots();
+  }
+
+  Future<void> removeDataFromDatabase() async {
+    FirebaseFirestore.instance.collection("data").get().then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.docs) {
+        ds.reference.delete();
+      }
+    });
   }
 }
