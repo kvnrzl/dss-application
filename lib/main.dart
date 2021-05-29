@@ -1,6 +1,4 @@
-import 'package:dss_application/home_page.dart';
-import 'package:dss_application/services/auth.dart';
-import 'package:dss_application/sign_in_page.dart';
+import 'package:dss_application/views/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
