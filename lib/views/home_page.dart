@@ -54,9 +54,6 @@ class _HomePageState extends State<HomePage> {
         bobotK5 * 0.15 +
         bobotK6 * 0.1;
 
-    print("Data bobot");
-    print(dataBobot);
-
     // menambahkan data ke database
     Map<String, dynamic> data = {
       "username": usernameController.text,
@@ -97,6 +94,8 @@ class _HomePageState extends State<HomePage> {
         "skor" : data[i]["skor"]});
     }
     _result = calculate(listOfData);
+  }
+  
   void onClickReset() async {
     isProcessed = false;
     await DatabaseService().removeDataFromDatabase().then((_) {
