@@ -10,6 +10,15 @@ class AuthService {
     return _auth.authStateChanges();
   }
 
+  Future<User> signWithEmailAndPassword(String email, String password) async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    UserCredential userCredential = await firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password);
+    User user = userCredential.user;
+
+    return user;
+  }
+
   Future<void> signInWithGoogleAccount() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     GoogleSignIn googleSignIn = GoogleSignIn();
@@ -27,15 +36,6 @@ class AuthService {
     User user = userCredential.user;
 
     if (userCredential != null) {
-      // 1. save ke shared pref
-      // SharedPrefHelper().saveUserId(user.uid);
-      // SharedPrefHelper().saveUsername(user.email.replaceAll("@gmail.com", ""));
-      // SharedPrefHelper().saveUserDisplayName(user.displayName);
-      // SharedPrefHelper().saveUserEmail(user.email);
-      // SharedPrefHelper().saveUserProfilePic(user.photoURL);
-      // SharedPrefHelper().saveUserPhoneNumber(user.phoneNumber);
-
-      // 2. upload ke database kemudian kirim ke homescreen
       Map<String, dynamic> userInfoMap = {
         // "userid": user.uid,
         "username": user.email.replaceAll("@gmail.com", ""),
