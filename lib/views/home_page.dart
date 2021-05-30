@@ -11,14 +11,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController usernameController = TextEditingController();
-  // List inputan = [];
   Stream<QuerySnapshot> resultData;
   int sawResult;
   bool isProcessed = false;
-  // var lists;
   List<Map<String, dynamic>> listOfData = [];
   List _weights;
   int _result;
+  String _textResult;
 
   int bobotK1, bobotK2, bobotK3, bobotK4, bobotK5, bobotK6;
   String key1, key2, key3, key4, key5, key6;
@@ -98,13 +97,14 @@ class _HomePageState extends State<HomePage> {
     }
     if(listOfData.isEmpty){
       listOfData.add({
-        "username": "Belum ada yang",
-        "data": [10,10,10,10,10,10],
-        "skor": 0
+        "dummy": "dummy",
       });
+      _textResult = "Belum ada data";
+      return;
     }
     _weights = calculate(listOfData);
     _result = decision(_weights);
+    _textResult = "${listOfData[_result]["username"]} layak mendapatkan beasiswa\nHASIL PEMBOBOTAN";
   }
 
   void onClickReset() async {
@@ -136,8 +136,7 @@ class _HomePageState extends State<HomePage> {
                 calculateSAW(snapshot.data.docs);
                 return Column(
                   children: [
-                    Text("${listOfData[_result]["username"]} layak mendapatkan beasiswa"),
-                    Text("HASIL PEMBOBOTAN"),
+                    Text("${_textResult}"),
                     ListView.builder(
                         shrinkWrap: true,
                         itemCount: snapshot.data.docs.length,
