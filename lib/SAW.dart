@@ -153,6 +153,6 @@ void main(){
   for(int i=0;i<jumlahOrang;i++){
     print(r[i]);
   }
-  print("Hasil Pembobotan =\t$v");
+  print("Hasil Pembobotan = $v");
   decision(v);
 }
