@@ -56,19 +56,10 @@ List<dynamic> weighting(List<List<dynamic>> r) {
 int decision(List<dynamic> v) {
   var index;
   index = findIndMax(v);
-  // for (int i = 0; i < v.length - 1; i++) {
-  //   if (v[i] > v[i + 1]) {
-  //     index = i;
-  //   } else {
-  //     index = i + 1;
-  //   }
-  //   print("INDEX ${index}");
-  // }
-
   return index;
 }
 
-String calculate(List<Map<String, dynamic>> listOfData) {
+List calculate(List<Map<String, dynamic>> listOfData) {
   var list = [];
   var jumlahOrang = listOfData.length;
 
@@ -82,11 +73,7 @@ String calculate(List<Map<String, dynamic>> listOfData) {
     print(r[i]);
   }
   var v = weighting(r);
-  print("Hasil Pembobotan =\t$v");
-  var res = decision(v);
-
-  print("${listOfData[res]["username"]} layak mendapatkan beasiswa");
-  return listOfData[res]["username"];
+  return v;
 }
 
 void main() {

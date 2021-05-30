@@ -16,7 +16,9 @@ class _HomePageState extends State<HomePage> {
   int sawResult;
   bool isProcessed = false;
   // var lists;
-  String _result;
+  List<Map<String, dynamic>> listOfData = [];
+  List _weights;
+  int _result;
 
   int bobotK1, bobotK2, bobotK3, bobotK4, bobotK5, bobotK6;
   String key1, key2, key3, key4, key5, key6;
@@ -86,7 +88,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void calculateSAW(var data) {
-    List<Map<String, dynamic>> listOfData = [];
+    listOfData.clear();
     for (int i = 0; i < data.length; i++) {
       listOfData.add({
         "username": data[i]["username"],
@@ -94,7 +96,15 @@ class _HomePageState extends State<HomePage> {
         "skor": data[i]["skor"]
       });
     }
-    _result = calculate(listOfData);
+    if(listOfData.isEmpty){
+      listOfData.add({
+        "username": "Belum ada yang",
+        "data": [10,10,10,10,10,10],
+        "skor": 0
+      });
+    }
+    _weights = calculate(listOfData);
+    _result = decision(_weights);
   }
 
   void onClickReset() async {
@@ -126,7 +136,8 @@ class _HomePageState extends State<HomePage> {
                 calculateSAW(snapshot.data.docs);
                 return Column(
                   children: [
-                    Text("$_result layak mendapatkan beasiswa"),
+                    Text("${listOfData[_result]["username"]} layak mendapatkan beasiswa"),
+                    Text("HASIL PEMBOBOTAN"),
                     ListView.builder(
                         shrinkWrap: true,
                         itemCount: snapshot.data.docs.length,
@@ -134,11 +145,9 @@ class _HomePageState extends State<HomePage> {
                           DocumentSnapshot ds = snapshot.data.docs[index];
                           var max = snapshot.data.docs[0]["skor"];
                           return Center(
-                            child: Text(ds["username"] +
-                                "=" +
-                                (ds["skor"] / max).toString()),
+                            child: Text(ds["username"] + "=" + (_weights[index]).toStringAsFixed(2)),
                           );
-                        }),
+                    }),
                   ],
                 );
               } else {

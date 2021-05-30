@@ -23,7 +23,6 @@ class DatabaseService {
   Future<Stream<QuerySnapshot>> queryDataFromDatabase() async {
     return FirebaseFirestore.instance
         .collection("data")
-        .orderBy("skor", descending: true)
         .snapshots();
   }
 
