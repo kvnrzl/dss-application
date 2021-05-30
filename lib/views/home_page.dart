@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
       "username": usernameController.text,
       "data": dataBobot,
       "skor": skor,
+      "result" : _result
     };
     if (usernameController.text != '') {
       await DatabaseService()
@@ -80,7 +81,6 @@ class _HomePageState extends State<HomePage> {
   void onClickProcess() async {
     isProcessed = true;
     resultData = await DatabaseService().queryDataFromDatabase();
-    print(resultData.runtimeType);
     usernameController.clear();
     setState(() {});
   }
@@ -90,8 +90,7 @@ class _HomePageState extends State<HomePage> {
     for(int i=0;i<data.length;i++){
       listOfData.add({
         "username" : data[i]["username"],
-        "data" : data[i]["data"],
-        "skor" : data[i]["skor"]});
+        "data" : data[i]["data"]});
     }
     _result = calculate(listOfData);
   }
@@ -117,12 +116,6 @@ class _HomePageState extends State<HomePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("$_result layak mendapatkan beasiswa"),
-            ],
-        ),
         StreamBuilder<QuerySnapshot>(
             stream: resultData,
             builder: (context, snapshot) {
@@ -144,6 +137,12 @@ class _HomePageState extends State<HomePage> {
                 return Center(child: CircularProgressIndicator());
               }
             }),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("$_result layak mendapatkan beasiswa"),
+            ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
