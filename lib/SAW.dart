@@ -1,4 +1,4 @@
-// import 'dart:math';
+import 'dart:math';
 
 //C1 Ranking kelas 20% max
 //C2 Pekerjaan Orang Tua 20% min
@@ -7,55 +7,46 @@
 //C5 Kondisi Rumah 15% min
 //C6 Pernah Menerima BOS 10% min
 
-const n = 8;
-var jumlahOrang = 3;
-var inputan = [];
+const kriteria = 6;
 var bobot = [0.2, 0.2, 0.2, 0.15, 0.15, 0.1];
 
-void generateInput(List<dynamic> list) {
-  var value = [100, 75, 60, 80, 25, 75, 25, 50];
-  list.add(value);
-  value = [75, 100, 80, 80, 50, 75, 50, 50];
-  list.add(value);
-  value = [50, 100, 100, 60, 75, 75, 75, 50];
-  list.add(value);
-}
-
-int findMax(int a, int b) {
-  if (a > b) {
-    return a;
-  } else {
-    return b;
+int findIndMax(List list){
+  double maxValue = 0;
+  for (int i = 0; i < list.length;i++) {
+      maxValue = max(maxValue, list[i]);
   }
+  var index = list.indexOf(maxValue);
+  return index;
 }
 
 List<List<dynamic>> normalization(List<dynamic> list, int jumlahOrang) {
   //Array 2d Dart
   int row = jumlahOrang;
-  int col = n;
+  int col = kriteria;
   var r = List.generate(row, (i) => List(col), growable: false);
 
-  var maxValue;
+  int maxValue;
 
-  for (int j = 0; j < n; j++) {
+  for (int j = 0; j < kriteria; j++) {
     maxValue = 0;
     for (int i = 0; i < jumlahOrang; i++) {
-      maxValue = findMax(maxValue, list[i][j]);
+      maxValue = max(maxValue, list[i][j]);
     }
     for (int i = 0; i < jumlahOrang; i++) {
       r[i][j] = list[i][j] / maxValue;
     }
   }
+  print(r.runtimeType);
   return r;
 }
 
 List<dynamic> weighting(List<List<dynamic>> r) {
   var v = [];
   var sum;
-  for (int i = 0; i < jumlahOrang; i++) {
+  for (int i = 0; i < r.length; i++) {
     sum = 0;
-    for (int j = 0; j < n; j++) {
-      sum += r[i][j] * bobot[i];
+    for (int j = 0; j < kriteria; j++) {
+      sum += r[i][j] * bobot[j];
     }
     v.add(sum);
   }
@@ -64,29 +55,40 @@ List<dynamic> weighting(List<List<dynamic>> r) {
 
 int decision(List<dynamic> v) {
   var index;
-  for (int i = 0; i < v.length - 1; i++) {
-    if (v[i] > v[i + 1]) {
-      index = i;
-    } else {
-      index = i + 1;
-    }
-  }
-  print("Orang ke ${index + 1} layak mendapatkan beasiswa");
+  index = findIndMax(v);
+  // for (int i = 0; i < v.length - 1; i++) {
+  //   if (v[i] > v[i + 1]) {
+  //     index = i;
+  //   } else {
+  //     index = i + 1;
+  //   }
+  //   print("INDEX ${index}");
+  // }
+  
   return index;
 }
 
+String calculate(List<Map<String,dynamic>> listOfData){
+    var list = [];
+    var jumlahOrang = listOfData.length;
+
+    for(int i=0;i<jumlahOrang;i++){
+      list.add(listOfData[i]["data"]);
+    }
+
+    var r = normalization(list, jumlahOrang);
+    print("Hasil Normalisasi =");
+    for (int i = 0; i < jumlahOrang; i++) {
+      print(r[i]);
+    }
+    var v = weighting(r);
+    print("Hasil Pembobotan =\t$v");
+    var res = decision(v);
+    
+    print("${listOfData[res]["username"]} layak mendapatkan beasiswa");
+    return listOfData[res]["username"];
+  }
+
 void main() {
   print("Hello World");
-  generateInput(inputan);
-  for (int i = 0; i < jumlahOrang; i++) {
-    print(inputan[i]);
-  }
-  var r = normalization(inputan, jumlahOrang);
-  var v = weighting(r);
-  print("Hasil Normalisasi =");
-  for (int i = 0; i < jumlahOrang; i++) {
-    print(r[i]);
-  }
-  print("Hasil Pembobotan = $v");
-  decision(v);
 }

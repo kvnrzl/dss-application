@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dss_application/SAW.dart';
 import 'package:dss_application/kriteria.dart';
-import 'package:dss_application/saw_method.dart';
 import 'package:dss_application/services/database.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   int sawResult;
   bool isProcessed = false;
   var lists;
+  String _result;
 
   int bobotK1, bobotK2, bobotK3, bobotK4, bobotK5, bobotK6;
   String key1, key2, key3, key4, key5, key6;
@@ -77,18 +78,37 @@ class _HomePageState extends State<HomePage> {
   void onClickProcess() async {
     isProcessed = true;
     resultData = await DatabaseService().queryDataFromDatabase();
+    print(resultData.runtimeType);
     usernameController.clear();
     setState(() {});
+  }
+
+  void calculateSAW(var data) async {
+    List<Map<String,dynamic>> listOfData = [];
+    for(int i=0;i<data.length;i++){
+      listOfData.add({
+        "username" : data[i]["username"],
+        "data" : data[i]["data"],
+        "skor" : data[i]["skor"]});
+    }
+    _result = calculate(listOfData);
   }
 
   Widget resultWidget() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("$_result layak mendapatkan beasiswa"),
+            ],
+        ),
         StreamBuilder<QuerySnapshot>(
             stream: resultData,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                calculateSAW(snapshot.data.docs);
                 return ListView.builder(
                     shrinkWrap: true,
                     itemCount: snapshot.data.docs.length,
