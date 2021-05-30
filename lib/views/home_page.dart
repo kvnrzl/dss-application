@@ -78,24 +78,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onClickProcess() async {
-    isProcessed = true;
     resultData = await DatabaseService().queryDataFromDatabase();
     print(resultData.runtimeType);
     usernameController.clear();
-    setState(() {});
+    setState(() {
+      isProcessed = true;
+    });
   }
 
-  void calculateSAW(var data) async {
-    List<Map<String,dynamic>> listOfData = [];
-    for(int i=0;i<data.length;i++){
+  void calculateSAW(var data) {
+    List<Map<String, dynamic>> listOfData = [];
+    for (int i = 0; i < data.length; i++) {
       listOfData.add({
-        "username" : data[i]["username"],
-        "data" : data[i]["data"],
-        "skor" : data[i]["skor"]});
+        "username": data[i]["username"],
+        "data": data[i]["data"],
+        "skor": data[i]["skor"]
+      });
     }
     _result = calculate(listOfData);
   }
-  
+
   void onClickReset() async {
     isProcessed = false;
     await DatabaseService().removeDataFromDatabase().then((_) {
@@ -117,29 +119,28 @@ class _HomePageState extends State<HomePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("$_result layak mendapatkan beasiswa"),
-            ],
-        ),
         StreamBuilder<QuerySnapshot>(
             stream: resultData,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 calculateSAW(snapshot.data.docs);
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data.docs.length,
-                    itemBuilder: (context, index) {
-                      DocumentSnapshot ds = snapshot.data.docs[index];
-                      var max = snapshot.data.docs[0]["skor"];
-                      return Center(
-                        child: Text(ds["username"] +
-                            "=" +
-                            (ds["skor"] / max).toString()),
-                      );
-                    });
+                return Column(
+                  children: [
+                    Text("$_result layak mendapatkan beasiswa"),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot ds = snapshot.data.docs[index];
+                          var max = snapshot.data.docs[0]["skor"];
+                          return Center(
+                            child: Text(ds["username"] +
+                                "=" +
+                                (ds["skor"] / max).toString()),
+                          );
+                        }),
+                  ],
+                );
               } else {
                 return Center(child: CircularProgressIndicator());
               }

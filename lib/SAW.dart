@@ -10,10 +10,10 @@ import 'dart:math';
 const kriteria = 6;
 var bobot = [0.2, 0.2, 0.2, 0.15, 0.15, 0.1];
 
-int findIndMax(List list){
+int findIndMax(List list) {
   double maxValue = 0;
-  for (int i = 0; i < list.length;i++) {
-      maxValue = max(maxValue, list[i]);
+  for (int i = 0; i < list.length; i++) {
+    maxValue = max(maxValue, list[i]);
   }
   var index = list.indexOf(maxValue);
   return index;
@@ -64,30 +64,30 @@ int decision(List<dynamic> v) {
   //   }
   //   print("INDEX ${index}");
   // }
-  
+
   return index;
 }
 
-String calculate(List<Map<String,dynamic>> listOfData){
-    var list = [];
-    var jumlahOrang = listOfData.length;
+String calculate(List<Map<String, dynamic>> listOfData) {
+  var list = [];
+  var jumlahOrang = listOfData.length;
 
-    for(int i=0;i<jumlahOrang;i++){
-      list.add(listOfData[i]["data"]);
-    }
-
-    var r = normalization(list, jumlahOrang);
-    print("Hasil Normalisasi =");
-    for (int i = 0; i < jumlahOrang; i++) {
-      print(r[i]);
-    }
-    var v = weighting(r);
-    print("Hasil Pembobotan =\t$v");
-    var res = decision(v);
-    
-    print("${listOfData[res]["username"]} layak mendapatkan beasiswa");
-    return listOfData[res]["username"];
+  for (int i = 0; i < jumlahOrang; i++) {
+    list.add(listOfData[i]["data"]);
   }
+
+  var r = normalization(list, jumlahOrang);
+  print("Hasil Normalisasi =");
+  for (int i = 0; i < jumlahOrang; i++) {
+    print(r[i]);
+  }
+  var v = weighting(r);
+  print("Hasil Pembobotan =\t$v");
+  var res = decision(v);
+
+  print("${listOfData[res]["username"]} layak mendapatkan beasiswa");
+  return listOfData[res]["username"];
+}
 
 void main() {
   print("Hello World");
