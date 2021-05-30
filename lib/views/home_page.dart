@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController usernameController = TextEditingController();
-  List inputan = [];
+  // List inputan = [];
   Stream<QuerySnapshot> resultData;
   int sawResult;
   bool isProcessed = false;
@@ -63,16 +63,21 @@ class _HomePageState extends State<HomePage> {
       "data": dataBobot,
       "skor": skor,
     };
-    await DatabaseService()
-        .addDataIntoDatabase(usernameController.text, data)
-        .then((_) {
+    if (usernameController.text != '') {
+      await DatabaseService()
+          .addDataIntoDatabase(usernameController.text, data)
+          .then((_) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Successfully Added')));
+        usernameController.clear();
+      }).catchError((onError) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(onError)));
+      });
+    } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Successfully Added')));
-      usernameController.clear();
-    }).catchError((onError) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(onError)));
-    });
+          .showSnackBar(SnackBar(content: Text("Ada data yang belum terisi")));
+    }
   }
 
   void onClickProcess() async {
@@ -92,6 +97,21 @@ class _HomePageState extends State<HomePage> {
         "skor" : data[i]["skor"]});
     }
     _result = calculate(listOfData);
+  void onClickReset() async {
+    isProcessed = false;
+    await DatabaseService().removeDataFromDatabase().then((_) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Data Berhasil Dihapus")));
+    }).catchError((error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
+    });
+    setState(() {});
+  }
+
+  void onClickBack() async {
+    isProcessed = false;
+    setState(() {});
   }
 
   Widget resultWidget() {
@@ -114,15 +134,37 @@ class _HomePageState extends State<HomePage> {
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
                       DocumentSnapshot ds = snapshot.data.docs[index];
+                      var max = snapshot.data.docs[0]["skor"];
                       return Center(
-                        child:
-                            Text(ds["username"] + "=" + ds["skor"].toString()),
+                        child: Text(ds["username"] +
+                            "=" +
+                            (ds["skor"] / max).toString()),
                       );
                     });
               } else {
                 return Center(child: CircularProgressIndicator());
               }
             }),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton.icon(
+                onPressed: () {
+                  onClickBack();
+                },
+                icon: Icon(Icons.arrow_back_sharp),
+                label: Text("Back")),
+            ElevatedButton.icon(
+              onPressed: () {
+                onClickReset();
+              },
+              icon: Icon(Icons.restore_from_trash),
+              label: Text("Reset Data"),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.red)),
+            ),
+          ],
+        )
       ],
     );
   }
