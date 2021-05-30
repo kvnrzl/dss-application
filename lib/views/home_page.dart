@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   Stream<QuerySnapshot> resultData;
   int sawResult;
   bool isProcessed = false;
-  var lists;
+  // var lists;
   String _result;
 
   int bobotK1, bobotK2, bobotK3, bobotK4, bobotK5, bobotK6;
@@ -79,7 +79,6 @@ class _HomePageState extends State<HomePage> {
 
   void onClickProcess() async {
     resultData = await DatabaseService().queryDataFromDatabase();
-    print(resultData.runtimeType);
     usernameController.clear();
     setState(() {
       isProcessed = true;
@@ -111,8 +110,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onClickBack() async {
-    isProcessed = false;
-    setState(() {});
+    setState(() {
+      isProcessed = false;
+    });
   }
 
   Widget resultWidget() {
