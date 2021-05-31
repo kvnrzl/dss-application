@@ -21,12 +21,14 @@ class DatabaseService {
   }
 
   Future<Stream<QuerySnapshot>> queryDataFromDatabase() async {
-    return FirebaseFirestore.instance
-        .collection("data")
-        .snapshots();
+    return FirebaseFirestore.instance.collection("data").snapshots();
   }
 
-  Future<void> removeDataFromDatabase() async {
+  Future<void> removeData(String doc) async {
+    await FirebaseFirestore.instance.collection("data").doc(doc).delete();
+  }
+
+  Future<void> removeAllDataFromDatabase() async {
     FirebaseFirestore.instance.collection("data").get().then((snapshot) {
       for (DocumentSnapshot ds in snapshot.docs) {
         ds.reference.delete();

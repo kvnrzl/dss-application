@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dss_application/SAW.dart';
 import 'package:dss_application/kriteria.dart';
+import 'package:dss_application/services/auth.dart';
 import 'package:dss_application/services/database.dart';
 import 'package:flutter/material.dart';
 
@@ -95,7 +96,7 @@ class _HomePageState extends State<HomePage> {
         "skor": data[i]["skor"]
       });
     }
-    if(listOfData.isEmpty){
+    if (listOfData.isEmpty) {
       listOfData.add({
         "dummy": "dummy",
       });
@@ -104,14 +105,15 @@ class _HomePageState extends State<HomePage> {
     }
     _weights = calculate(listOfData);
     _result = decision(_weights);
-    _textResult = "${listOfData[_result]["username"]} layak mendapatkan beasiswa";
+    _textResult =
+        "${listOfData[_result]["username"]} layak mendapatkan beasiswa";
   }
 
   void onClickReset() async {
     isProcessed = false;
-    await DatabaseService().removeDataFromDatabase().then((_) {
+    await DatabaseService().removeAllDataFromDatabase().then((_) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Data Berhasil Dihapus")));
+          .showSnackBar(SnackBar(content: Text("Semua Data Berhasil Dihapus")));
     }).catchError((error) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(error)));
@@ -122,6 +124,17 @@ class _HomePageState extends State<HomePage> {
   void onClickBack() async {
     setState(() {
       isProcessed = false;
+    });
+  }
+
+  void onClickRemove(String doc) async {
+    await DatabaseService().removeData(doc).then((_) {
+      onClickProcess();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Data $doc berhasil dihapus")));
+    }).catchError((error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
     });
   }
 
@@ -136,17 +149,33 @@ class _HomePageState extends State<HomePage> {
                 calculateSAW(snapshot.data.docs);
                 return Column(
                   children: [
-                    Text("${_textResult}"),
                     ListView.builder(
                         shrinkWrap: true,
                         itemCount: snapshot.data.docs.length,
                         itemBuilder: (context, index) {
                           DocumentSnapshot ds = snapshot.data.docs[index];
-                          var max = snapshot.data.docs[0]["skor"];
-                          return Center(
-                            child: Text(ds["username"] + "=" + (_weights[index]).toStringAsFixed(2)),
+                          // var max = snapshot.data.docs[0]["skor"];
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(ds["username"] +
+                                  "=" +
+                                  (_weights[index]).toStringAsFixed(2)),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  onClickRemove(ds["username"]);
+                                },
+                                icon: Icon(Icons.remove),
+                                label: Text("Remove"),
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.red),
+                                ),
+                              )
+                            ],
                           );
-                    }),
+                        }),
+                    Text("$_textResult"),
                   ],
                 );
               } else {
@@ -181,6 +210,14 @@ class _HomePageState extends State<HomePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        ElevatedButton.icon(
+          onPressed: () async {
+            await AuthService().signOut();
+            setState(() {});
+          },
+          icon: Icon(Icons.settings_backup_restore_sharp),
+          label: Text("Test Sign Out"),
+        ),
         TextFormField(
           controller: usernameController,
           decoration: InputDecoration(
