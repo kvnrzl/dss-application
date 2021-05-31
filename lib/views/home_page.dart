@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
     }
     _weights = calculate(listOfData);
     _result = decision(_weights);
-    _textResult = "${listOfData[_result]["username"]} layak mendapatkan beasiswa\nHASIL PEMBOBOTAN";
+    _textResult = "${listOfData[_result]["username"]} layak mendapatkan beasiswa";
   }
 
   void onClickReset() async {
