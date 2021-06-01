@@ -1,7 +1,5 @@
-import 'package:dss_application/views/home_page.dart';
 import 'package:dss_application/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -51,20 +49,28 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  AuthService()
-                      .signWithEmailAndPassword(
-                          emailController.text, passwordController.text)
-                      .then((value) => Get.off(HomePage()));
-                },
-                child: Text("Sign In"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      AuthService().signUpWithEmailAndPassword(
+                          emailController.text, passwordController.text);
+                    },
+                    child: Text("Sign Up"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      AuthService().signInWithEmailAndPassword(
+                          emailController.text, passwordController.text);
+                    },
+                    child: Text("Sign In"),
+                  ),
+                ],
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  AuthService()
-                      .signInWithGoogleAccount()
-                      .then((value) => Get.off(HomePage()));
+                  AuthService().signInWithGoogleAccount();
                 },
                 icon: Icon(Icons.mail),
                 label: Text("Google Sign In"),
