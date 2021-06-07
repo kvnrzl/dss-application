@@ -24,6 +24,7 @@ class _OutputPageState extends State<OutputPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Container(
           child: StreamBuilder<QuerySnapshot>(
             stream: streamData,

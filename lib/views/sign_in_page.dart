@@ -14,6 +14,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
